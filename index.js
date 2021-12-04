@@ -3,6 +3,8 @@ var  express = require('express');
 var app = express();
 const path = require('path')
 
+const fs= require('fs')
+
 app.use(express.json());		//POST
 app.use(express.urlencoded());	//POST
 
@@ -18,7 +20,15 @@ app.get('/saludo', function (req, res) {
 });
 
 app.post('/respuesta',(req,res)=>{
-	res.send("Nombre ingresado: " +req.body.nombre)
+	if (req.body.file=="Y"){
+		fs.writeFileSync('archivoDeNombres.txt', "Hola "+ req.body.nombre);
+		var informacion = fs.readFileSync('archivoDeNombres.txt', 'utf8');
+		res.send("Esto es lo que dice el archivo guardado : " + informacion)	
+		console.log("dfsf "+informacion)
+	}else {
+		fs.unlinkSync('archivoDeNombres.txt');
+		res.send("Cualquier archivo que existiece se borro: " +req.body.nombre)
+	}
 })
 
 app.listen(8000, function(){
